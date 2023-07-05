@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/css/reset.css"/>
+    <link rel="stylesheet" href="./assets/css/style.css"/>
+    <title>The Quiz</title>
+</head>
+<body>
+    <header class="header">
+        <a href="highscore.html">
+            <button class="highscore-button" id="view-highscore">View Highscores</button>
+        </a>        
+        <div id="timer">Time:75</div>
+    </header> 
+    <section class="quiz" id="quizContainer">
+        <div><h2 id="question">Question Here:</h2></div>
+        <div id="quizDiv" class="answers">
+            <button class="quizButton" id="choice-1">Answer Here</button>
+            <button class="quizButton" id="choice-2">Answer Here</button>
+            <button class="quizButton" id="choice-3">Answer Here</button>
+            <button class="quizButton" id="choice-4">Answer Here</button>
+        </div>    
+        <div id="wrong-right"></div>
+    </section>
+    <script src="./assets/js/main.js"></script>
+</body>
+</html>
