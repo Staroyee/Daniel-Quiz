@@ -50,6 +50,8 @@ var questions = [
 },
 ];
 
+init();
+
 function displayQuestions(questionList) {
     questionsEl.innerText = questionList.askQuestion[0];
     choice1El.textContent = questionList.choices[0];
@@ -58,3 +60,71 @@ function displayQuestions(questionList) {
     choice4El.textContent = questionList.choices[3];
 };
 
+function init() {
+    startQuiz();
+    quizDivEl.addEventListener("click", function(e) {
+        var buttonClicked = e.target;
+        checkAnswer(buttonClicked.innerText)
+    })
+};
+
+function startQuiz() {
+    displayQuestions(questions[0]);
+    decreaseTimer();
+};
+
+function checkAnswer(selectedAnswer) {
+    if (selectedAnswer === questions[currentQuestion].answer) {
+        score += 1;
+    } else {
+        timeLeft -= 10;
+    }
+    assignNextQuestion()
+};
+
+function assignNextQuestion() {
+    if (currentQuestion === questions.length - 1) {
+        endQuiz();
+    } else {
+        currentQuestion++;
+        displayQuestions(questions[currentQuestion]);
+    }
+};
+
+function decreaseTimer() {
+    timerDiv.innerHTML = "Time: " + timeLeft;
+    timeLeft --;
+    if (timeLeft < 0) {
+         endQuiz();
+    } else {
+        timerInterval = setTimeout(decreaseTimer, 1000);
+    }
+};
+
+function clearTimer() {
+    clearTimeout(timerInterval);
+};
+
+function endQuiz() {
+    quizDivEl.remove()
+    questionsEl.textContent = "All done!";
+    var userScore = document.createElement("p");
+    userScore.textContent = ["Your final score is: " + score];
+    userScore.setAttribute("style", "padding: 10px 10px 10px 0px; font-size: 15px;");
+    questionsEl.appendChild(userScore);
+    var form = document.createElement("form");
+    questionsEl.appendChild(form);
+    var initials = document.createElement("p");
+    initials.innerText = "Enter initials: ";
+    initials.setAttribute("style", "display: inline-flex; font-size: 15px; padding-right: 5px;");
+    form.appendChild(initials);
+    var initialsInput = document.createElement("input");
+    initialsInput.setAttribute("style", "font-size: 15px; padding: 5px; margin: 5px;");
+    initialsInput.type = "text";
+    form.appendChild(initialsInput);
+    var submitButton = document.createElement("button");
+    submitButton.textContent = "Submit";
+    submitButton.setAttribute("style", "font-size: 15px; margin: 5px; padding-right: 7px;");
+    form.appendChild(submitButton);
+    clearTimer();
+}
