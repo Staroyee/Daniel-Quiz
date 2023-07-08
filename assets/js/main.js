@@ -73,6 +73,16 @@ function startQuiz() {
     decreaseTimer();
 };
 
+function decreaseTimer() {
+    timerDiv.innerHTML = "Time: " + timeLeft;
+    timeLeft --;
+    if (timeLeft < 0) {
+         endQuiz();
+    } else {
+        timerInterval = setTimeout(decreaseTimer, 1000);
+    }
+};
+
 function checkAnswer(selectedAnswer) {
     if (selectedAnswer === questions[currentQuestion].answer) {
         score += 1;
@@ -88,16 +98,6 @@ function assignNextQuestion() {
     } else {
         currentQuestion++;
         displayQuestions(questions[currentQuestion]);
-    }
-};
-
-function decreaseTimer() {
-    timerDiv.innerHTML = "Time: " + timeLeft;
-    timeLeft --;
-    if (timeLeft < 0) {
-         endQuiz();
-    } else {
-        timerInterval = setTimeout(decreaseTimer, 1000);
     }
 };
 
@@ -127,4 +127,14 @@ function endQuiz() {
     submitButton.setAttribute("style", "font-size: 15px; margin: 5px; padding-right: 7px;");
     form.appendChild(submitButton);
     clearTimer();
-}
+
+    submitButton.addEventListener("click", function(event){
+        event.preventDefault();
+            saveScore(initialsInput.value, score);
+        });
+    }
+
+    function saveScore(savedInitials, savedScore) {
+        localStorage.setItem("newHighScoreAdded", JSON.stringify({ savedInitials, savedScore }));
+        window.location.assign("highscore.html");
+    }
