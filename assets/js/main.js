@@ -12,7 +12,7 @@ var choice1El = document.getElementById("choice-1");
 var choice2El = document.getElementById("choice-2");
 var choice3El = document.getElementById("choice-3");
 var choice4El = document.getElementById("choice-4");
-var wrongRightEl = document.getElementById("wrong-right");
+var wrongCorrectEl = document.getElementById("wrong-correct");
 var quizDivEl = document.getElementById("quizDiv")
 var score = 0;
 var timeLeft = 75;
@@ -93,12 +93,23 @@ function decreaseTimer() {
     }
 };
 
+//VARIABLES FOR THE CHECKANSWER FUNCTION TO TELL THE USER IF THE CHOICE WAS CORRECT OR WRONG.
+var correct = document.getElementById("correct");
+correct.setAttribute("style", "display: none;");
+var wrong = document.getElementById("wrong");
+wrong.setAttribute("style", "display: none;");
+
 /*A FUNCTION TO CHECK IF THE ANSWER VARIABLE WAS PICKED OUT OF THE QUESTIONS OBJECT. REDUCING THE TIMER BY 10 SECONDS IF NOT CORRECT, ADDING 1 TO THE SCORE IF CORRECT, AND DISPLAYING THE NEXT QUESTION.*/
+//THIS FUNCTION ALSO DISPLAYS IF THE CHOICE WAS CORRECT OR WRONG.
 function checkAnswer(selectedAnswer) {
     if (selectedAnswer === questions[currentQuestion].answer) {
         score += 1;
+        correct.setAttribute("style", "display: block;");
+        wrong.setAttribute("style", "display: none;");
     } else {
         timeLeft -= 10;
+        correct.setAttribute("style", "display: none;");
+        wrong.setAttribute("style", "display: block;");
     }
     assignNextQuestion()
 };
@@ -124,7 +135,7 @@ IT DISPLAYS THE SCORE THEY RECEIVED.
 AN EVENT LISTENER IS ADDED TO THE BUTTON TO COLLECT THE USERS INPUT AND SCORE, WHICH THEN TAKES THE USER TO THE 'HIGHSCORE.HTML' PAGE.
 WHEN THE BUTTON IS CLICKED THE USER INPUT AND SCORE IS SAVED INTO THE LOCAL STORAGE ON THE HIGHSCORE.HTML DOC USING THE 'WINDOW.LOCATION.ASSIGN' METHOD. */
 function endQuiz() {
-    quizDivEl.remove()
+    quizDivEl.remove();
     questionsEl.textContent = "All done!";
     var userScore = document.createElement("p");
     userScore.textContent = ["Your final score is: " + score];
@@ -145,6 +156,7 @@ function endQuiz() {
     submitButton.setAttribute("style", "font-size: 15px; margin: 5px; padding-right: 7px;");
     form.appendChild(submitButton);
     clearTimer();
+    setWrongCorrectTimeout();
 
     //EVENT LISTENER ON THE SUBMIT BUTTON TO COLLECT THE SCORE AND INPUT.
     submitButton.addEventListener("click", function(event){
@@ -153,16 +165,20 @@ function endQuiz() {
         });
     }
 
-    //A FUNCTION TO SAVE THE SCORE AND INPUT TO LOCAL STORAGE ON THE HIGHSCORE.HTML PAGE.
+    //FUNCTION TO REMOVE THE DIV ON A THREE SECOND DELAY WHEN THE 'ENDQUIZ' FUNCTION RUNS.
+    function setWrongCorrectTimeout() {
+        setTimeout(function() {
+        wrongCorrectEl.remove();
+    }, 3000);
+    }
+
+    //A FUNCTION TO SAVE THE SCORE AND INPUT TO AN OBJECT AND TO LOCAL STORAGE ON THE HIGHSCORE.HTML PAGE.
     function saveScore(savedInitials, savedScore) {
         var userObj = {
             initials: savedInitials,
             score: savedScore
         }
-
         hsArray.push(userObj)
-
         localStorage.setItem('hsArray', JSON.stringify(hsArray))
-        
         window.location.assign("highscore.html");
     }
