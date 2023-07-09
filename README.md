@@ -45,7 +45,7 @@ Navigation: (Navbar)
 
 
 ## Deployed Application Link
-* 
+* https://staroyee.github.io/Daniel-Quiz/
 
 ## Screenshot
 ![alt text](assets/images/home.JPG)
