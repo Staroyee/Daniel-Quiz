@@ -1,9 +1,11 @@
+//HOME PAGE HTML DOC VARIABLES
 var highscoreButton = document.getElementById("view-highscore");
 var timerDiv = document.getElementById("timer");
 var titleH1 = document.getElementById("title");
 var paragraph = document.getElementById("rules");
 var startButton = document.getElementById("start-button");
 
+//QUIZ PAGE HTML DOC VARIABLES
 var quizContainerEl = document.getElementById("quizContainer")
 var questionsEl = document.getElementById("question");
 var choice1El = document.getElementById("choice-1");
@@ -12,16 +14,19 @@ var choice3El = document.getElementById("choice-3");
 var choice4El = document.getElementById("choice-4");
 var wrongRightEl = document.getElementById("wrong-right");
 var quizDivEl = document.getElementById("quizDiv")
-
-var initials = document.getElementById("enter-initials");
-var clearScores = document.getElementById("clear-scores");
-var highscores = document.getElementById("highscores");
-
 var score = 0;
 var timeLeft = 75;
 var timerInterval = 0;
 var currentQuestion = 0;
 
+//HIGHSCORES PAGE HTML DOC VARIABLES
+var initials = document.getElementById("enter-initials");
+var clearScores = document.getElementById("clear-scores");
+var highscores = document.getElementById("highscores");
+
+var hsArray = JSON.parse(localStorage.getItem("hsArray")) || [];
+
+//OBJECT VARIABLE TO STORE OBJECTS CONTAINING QUESTIONS, CHOICES, AND ANSWERS.
 var questions = [
     {
     askQuestion: ["Commonly used data types DO NOT include:"],
@@ -50,16 +55,10 @@ var questions = [
 },
 ];
 
+//CALLING THE FUNCTION TO INITIALISE THE PAGE WHEN THE QUIZ.HTML DOC IS OPENED.
 init();
 
-function displayQuestions(questionList) {
-    questionsEl.innerText = questionList.askQuestion[0];
-    choice1El.textContent = questionList.choices[0];
-    choice2El.textContent = questionList.choices[1];
-    choice3El.textContent = questionList.choices[2];
-    choice4El.textContent = questionList.choices[3];
-};
-
+//FUNCTION CALLS UPON THE START QUIZ FUNCTION TO BEGIN THE QUIZ.
 function init() {
     startQuiz();
     quizDivEl.addEventListener("click", function(e) {
@@ -68,11 +67,22 @@ function init() {
     })
 };
 
+/*FUNCTION CALLS UPON THE 'DISPLAYQUESTIONS' AND 'DECREASETIMER' FUNCTIONS TO START THE QUIZ AND THE TIMER COUNTDOWN.*/
 function startQuiz() {
     displayQuestions(questions[0]);
     decreaseTimer();
 };
 
+/*FUNCTION TO DISPLAY THE QUESTIONS ALONG SIDE THE CHOICES IN ORDER OF FIRST TO LAST.*/
+function displayQuestions(questionList) {
+    questionsEl.innerText = questionList.askQuestion[0];
+    choice1El.textContent = questionList.choices[0];
+    choice2El.textContent = questionList.choices[1];
+    choice3El.textContent = questionList.choices[2];
+    choice4El.textContent = questionList.choices[3];
+};
+
+/*A FUNCTION TO MAKE THE TIMER TICK DOWN AT A RATE OF 1 EVERY 1 SECOND. IF THE TIMER RUNS OUT THE FUNCTION WILL CALL UPON THE 'ENDQUIZ' FUNCTION.*/
 function decreaseTimer() {
     timerDiv.innerHTML = "Time: " + timeLeft;
     timeLeft --;
@@ -83,6 +93,7 @@ function decreaseTimer() {
     }
 };
 
+/*A FUNCTION TO CHECK IF THE ANSWER VARIABLE WAS PICKED OUT OF THE QUESTIONS OBJECT. REDUCING THE TIMER BY 10 SECONDS IF NOT CORRECT, ADDING 1 TO THE SCORE IF CORRECT, AND DISPLAYING THE NEXT QUESTION.*/
 function checkAnswer(selectedAnswer) {
     if (selectedAnswer === questions[currentQuestion].answer) {
         score += 1;
@@ -92,6 +103,7 @@ function checkAnswer(selectedAnswer) {
     assignNextQuestion()
 };
 
+/*THE FUNCTION TO DISPLAY THE NEXT QUESTION EACH TIME CHOICE IS PICKED. WILL CALL UPON THE 'ENDQUIZ' FUNCTION IF THERE ARE NO QUESTIONS LEFT TO CHOOSE FROM.*/
 function assignNextQuestion() {
     if (currentQuestion === questions.length - 1) {
         endQuiz();
@@ -101,10 +113,16 @@ function assignNextQuestion() {
     }
 };
 
+/*A FUNCTION TO RESET THE TIMER.*/
 function clearTimer() {
     clearTimeout(timerInterval);
 };
 
+/*THIS FUNCTION ENDS THE GAME, REMOVES THE QUIZ ELEMENTS AND REPLACES THEM WITH A FORM WITH AN INPUT SO THAT THE USER MAY ENTER THEIR INITIALS.
+IT DISPLAYS THE SCORE THEY RECEIVED.
+
+AN EVENT LISTENER IS ADDED TO THE BUTTON TO COLLECT THE USERS INPUT AND SCORE, WHICH THEN TAKES THE USER TO THE 'HIGHSCORE.HTML' PAGE.
+WHEN THE BUTTON IS CLICKED THE USER INPUT AND SCORE IS SAVED INTO THE LOCAL STORAGE ON THE HIGHSCORE.HTML DOC USING THE 'WINDOW.LOCATION.ASSIGN' METHOD. */
 function endQuiz() {
     quizDivEl.remove()
     questionsEl.textContent = "All done!";
@@ -128,13 +146,23 @@ function endQuiz() {
     form.appendChild(submitButton);
     clearTimer();
 
+    //EVENT LISTENER ON THE SUBMIT BUTTON TO COLLECT THE SCORE AND INPUT.
     submitButton.addEventListener("click", function(event){
         event.preventDefault();
             saveScore(initialsInput.value, score);
         });
     }
 
+    //A FUNCTION TO SAVE THE SCORE AND INPUT TO LOCAL STORAGE ON THE HIGHSCORE.HTML PAGE.
     function saveScore(savedInitials, savedScore) {
-        localStorage.setItem("newHighScoreAdded", JSON.stringify({ savedInitials, savedScore }));
+        var userObj = {
+            initials: savedInitials,
+            score: savedScore
+        }
+
+        hsArray.push(userObj)
+
+        localStorage.setItem('hsArray', JSON.stringify(hsArray))
+        
         window.location.assign("highscore.html");
     }

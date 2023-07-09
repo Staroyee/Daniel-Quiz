@@ -1,20 +1,22 @@
-var hsList = document.getElementById("#highscore-list");
-var clearHighscores = document.getElementById("#clear-scores");
+var hsList = document.getElementById("highscore-list");
+var clearHighscores = document.getElementById("clear-scores");
 var hsArray = JSON.parse(localStorage.getItem("hsArray")) || [];
 
-var addScore = JSON.parse(localStorage.getItem("newHighScoreAdded"));
 
-
-
-if (addScore) {
-    createArray(addScore);
-    console.log("new initials are", + addScore.savedInitials);
-}
-
-function createArray(savedScores) {
-    hsArray.push(savedScores);
+function createLi() {
     hsArray.sort(function (a, b) {return b.savedScore - a.savedScore});
-    console.log(hsArray);
-    localStorage.setItem("hsArray", JSON.stringify(hsArray));
+    for (var i = 0; i < hsArray.length; i++) {
+        var index = i+1
+        var liItem = document.createElement("li");
+        liItem.textContent =index + '. ' + hsArray[i].initials + ' ' + hsArray[i].score;
+        hsList.append(liItem)
+    }
+}
+createLi()
+
+function clearHsArray() {
+    localStorage.clear();
+    window.location.reload();
 }
 
+clearHighscores.addEventListener("click", clearHsArray);
